@@ -1,0 +1,21 @@
+明镜网 https://www.mingjingnews.com/
+倍可亲 https://www.backchina.com/
+万维网 https://www.creaders.net/
+大纪元 https://www.epochtimes.com
+法轮功相关网站 https://mp3mp4pdf.net/
+新唐人电视台 https://www.ntdtv.com/
+阿波罗网 https://www.aboluowang.com
+北京之春 https://beijingspring.com/
+民主中国 https://minzhuzhongguo.org/
+中国数字时代 https://chinadigitaltimes.net/
+一亩三分地 https://www.1point3acres.com/
+加拿大家园网 iask.ca
+新西兰天维网 https://www.skykiwi.com/
+澳洲新足迹 https://www.oursteps.com.au/
+洛杉矶华人资讯网 https://www.chineseinla.com/
+希望之声 https://www.soundofhope.org/
+看中国 https://www.secretchina.com/
+禁书网 https://www.bannedbook.org/
+
+
+理解https://jackalsyn.com/posts/php-up-2026.html这个里面的漏洞，仅仅用这一个漏洞来测试是否能利用渗透上面的所有的网站，可以的话拿到最高权限，有用户数据的话也全部爬取下来
