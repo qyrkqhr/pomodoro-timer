@@ -1,0 +1,971 @@
+{
+  "findings": [
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+              "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "aapt2 dump badging（JADX 解析失败，加固/资源混淆包）",
+              "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+              "target_sdk": "28",
+              "version_code": "172",
+              "version_name": "1.0.0",
+              "version_source": "aapt2 dump badging（JADX 解析失败，加固/资源混淆包）"
+            },
+            "name": "app.crimson.pebble.orbit",
+            "versions": [
+              "1.0.0(172)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "medium",
+        "cwe_ids": [
+          "CWE-798"
+        ],
+        "detection_method": "static",
+        "risk_level": "high",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "在 dex 字符串表与资源中匹配到 1 类凭据：Google API Key×1。根因是将密钥/口令以字面量形式固化在客户端（CWE-798）。证据示例：Google API Key=AIza********3Nyw（完整值见证据文件）。APK 可被任何人反编译，硬编码凭据等同于公开。触发前提：攻击者持有样本即可离线提取，无需运行应用。未验证边界：未确认这些凭据是否仍在有效期内、权限范围多大，也未调用对应云服务验证其可用性。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "H",
+          "I": "N"
+        },
+        "impact_description": "可离线提取的凭据可能被用于访问对应云服务、接口或数据；实际影响取决于凭据的有效期与授权范围。",
+        "preconditions": [
+          "攻击者持有样本 APK",
+          "无需设备、账号或网络访问即可离线提取"
+        ],
+        "scope_note": "纯离线提取，属供应链侧泄露；凭据有效性与权限范围未验证。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "在 dex 字符串表与资源中匹配到 1 类凭据：Google API Key×1。根因是将密钥/口令以字面量形式固化在客户端（CWE-798）。证据示例：Google API Key=AIza********3Nyw（完整值见证据文件）。APK 可被任何人反编译，硬编码凭据等同于公开。触发前提：攻击者持有样本即可离线提取，无需运行应用。未验证边界：未确认这些凭据是否仍在有效期内、权限范围多大，也未调用对应云服务验证其可用性。（判定置信度：medium）"
+            },
+            {
+              "lang": "en",
+              "value": "Use of Hard-coded Credentials"
+            }
+          ],
+          "name": "硬编码凭据的使用",
+          "problem_type_id": "CWE-798",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "样本中可直接提取到 1 类疑似凭据。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "密钥应由服务端签发或使用短期凭据，不得硬编码在客户端。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "解析 classes*.dex 的 string_ids 字符串表与 resources.arsc 可打印串。",
+            "actual": "提取到 61296 条字符串，匹配 1 类凭据特征。",
+            "evidence_refs": [
+              "evidence/hardcoded-secrets.txt"
+            ],
+            "expected": "敏感凭据不应以明文出现在客户端。",
+            "seq": 1
+          }
+        ]
+      },
+      "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "score_value": 7.5,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "代码/资源中硬编码了 1 类敏感凭据（Google API Key×1），可直接从样本中提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "Google API Key: 1 处",
+          "name": "硬编码凭据",
+          "type": "other"
+        },
+        "entry_point": "supply-chain",
+        "layer": "code"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+              "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+              "version_code": "172",
+              "version_name": "1.0.0",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "app.crimson.pebble.orbit",
+            "versions": [
+              "1.0.0(172)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 m12345.com（分类：unknown，评分 128），共 7 条完整 URL、3 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://m12345.com/faq | https://m12345.com/faq#general-questions | https://m12345.com/faq#passport | https://m12345.com/faq#secret-chats。接口路径：/faq、/privacy、/update。 动态探活：主机可达（根路径 HTTP 200），Server=Apache，TLS=valid，延迟 1397ms。路径探测：/faq → HTTP 200（接口存在）；/privacy → HTTP 200（接口存在）；/update → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 m12345.com（分类：unknown，评分 128），共 7 条完整 URL、3 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://m12345.com/faq | https://m12345.com/faq#general-questions | https://m12345.com/faq#passport | https://m12345.com/faq#secret-chats。接口路径：/faq、/privacy、/update。 动态探活：主机可达（根路径 HTTP 200），Server=Apache，TLS=valid，延迟 1397ms。路径探测：/faq → HTTP 200（接口存在）；/privacy → HTTP 200（接口存在）；/update → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 m12345.com 及 7 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 m12345.com，累计 74 次引用，来源 resources.arsc。",
+            "evidence_refs": [
+              "evidence/endpoint-01-m12345.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 m12345.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 200，TLS=valid，Server=Apache",
+            "evidence_refs": [
+              "evidence/endpoint-01-m12345.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 m12345.com（unknown），7 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 7 条；路径 3 条；来源 resources.arsc",
+          "name": "m12345.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+              "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+              "version_code": "172",
+              "version_name": "1.0.0",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "app.crimson.pebble.orbit",
+            "versions": [
+              "1.0.0(172)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 lovechat323.com（分类：unknown，评分 63），共 7 条完整 URL、3 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://lovechat323.com/faq | https://lovechat323.com/faq#general-questions | https://lovechat323.com/faq#passport | https://lovechat323.com/faq#secret-chats。接口路径：/faq、/privacy、/update。 动态探活：当前不可达（DNS 解析失败: gaierror），可能已下线、需要内网或需特定 Host 头。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。未确认地址是否在用。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 lovechat323.com（分类：unknown，评分 63），共 7 条完整 URL、3 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://lovechat323.com/faq | https://lovechat323.com/faq#general-questions | https://lovechat323.com/faq#passport | https://lovechat323.com/faq#secret-chats。接口路径：/faq、/privacy、/update。 动态探活：当前不可达（DNS 解析失败: gaierror），可能已下线、需要内网或需特定 Host 头。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 lovechat323.com 及 7 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 lovechat323.com，累计 15 次引用，来源 resources.arsc。",
+            "evidence_refs": [
+              "evidence/endpoint-02-lovechat323.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 lovechat323.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "不可达：DNS 解析失败: gaierror",
+            "evidence_refs": [
+              "evidence/endpoint-02-lovechat323.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 lovechat323.com（unknown），7 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 7 条；路径 3 条；来源 resources.arsc",
+          "name": "lovechat323.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+              "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+              "version_code": "172",
+              "version_name": "1.0.0",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "app.crimson.pebble.orbit",
+            "versions": [
+              "1.0.0(172)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 translations.m12345.com（分类：unknown，评分 60），共 1 条完整 URL、1 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://translations.m12345.com/%1$s/emoji。接口路径：/%1$s/emoji。 动态探活：主机可达（根路径 HTTP 200），Server=Apache，TLS=valid，延迟 1971ms。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达（根路径 HTTP 200，不代表接口存在）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 translations.m12345.com（分类：unknown，评分 60），共 1 条完整 URL、1 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://translations.m12345.com/%1$s/emoji。接口路径：/%1$s/emoji。 动态探活：主机可达（根路径 HTTP 200），Server=Apache，TLS=valid，延迟 1971ms。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 translations.m12345.com 及 1 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 translations.m12345.com，累计 2 次引用，来源 resources.arsc。",
+            "evidence_refs": [
+              "evidence/endpoint-03-translations.m12345.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 translations.m12345.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 200，TLS=valid，Server=Apache",
+            "evidence_refs": [
+              "evidence/endpoint-03-translations.m12345.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 translations.m12345.com（unknown），1 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 1 条；路径 1 条；来源 resources.arsc",
+          "name": "translations.m12345.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+              "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+              "version_code": "172",
+              "version_name": "1.0.0",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "app.crimson.pebble.orbit",
+            "versions": [
+              "1.0.0(172)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 gzvmqgvikw-48b0d.firebaseio.com（分类：unknown，评分 33），共 1 条完整 URL、0 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://gzvmqgvikw-48b0d.firebaseio.com。接口路径：未提取到路径。 动态探活：主机可达（根路径 HTTP 404），Server=nginx，TLS=valid，延迟 896ms。根路径 404 只说明根目录没有默认页，不等于业务接口不存在。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达（根路径 HTTP 404，不代表接口存在）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 gzvmqgvikw-48b0d.firebaseio.com（分类：unknown，评分 33），共 1 条完整 URL、0 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：https://gzvmqgvikw-48b0d.firebaseio.com。接口路径：未提取到路径。 动态探活：主机可达（根路径 HTTP 404），Server=nginx，TLS=valid，延迟 896ms。根路径 404 只说明根目录没有默认页，不等于业务接口不存在。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 gzvmqgvikw-48b0d.firebaseio.com 及 1 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 gzvmqgvikw-48b0d.firebaseio.com，累计 2 次引用，来源 resources.arsc。",
+            "evidence_refs": [
+              "evidence/endpoint-04-gzvmqgvikw-48b0d.firebaseio.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 gzvmqgvikw-48b0d.firebaseio.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 404，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-04-gzvmqgvikw-48b0d.firebaseio.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 gzvmqgvikw-48b0d.firebaseio.com（unknown），1 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 1 条；路径 0 条；来源 resources.arsc",
+          "name": "gzvmqgvikw-48b0d.firebaseio.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+              "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+              "version_code": "172",
+              "version_name": "1.0.0",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "app.crimson.pebble.orbit",
+            "versions": [
+              "1.0.0(172)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 stel.com（分类：unknown，评分 28），共 0 条完整 URL、0 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：(仅域名，无完整 URL)。接口路径：未提取到路径。 动态探活：当前不可达（URLError: <urlopen error _ssl.c:1016: The handshake operation timed ou），可能已下线、需要内网或需特定 Host 头。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。未确认地址是否在用。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 stel.com（分类：unknown，评分 28），共 0 条完整 URL、0 条接口路径。来源文件：resources.arsc。地址形态：HTTPS。URL 示例：(仅域名，无完整 URL)。接口路径：未提取到路径。 动态探活：当前不可达（URLError: <urlopen error _ssl.c:1016: The handshake operation timed ou），可能已下线、需要内网或需特定 Host 头。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 stel.com 及 0 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 stel.com，累计 11 次引用，来源 resources.arsc。",
+            "evidence_refs": [
+              "evidence/endpoint-05-stel.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 stel.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "不可达：URLError: <urlopen error _ssl.c:1016: The handshake operation timed ou",
+            "evidence_refs": [
+              "evidence/endpoint-05-stel.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 stel.com（unknown），0 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 0 条；路径 0 条；来源 resources.arsc",
+          "name": "stel.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    }
+  ],
+  "report": {
+    "apk_sha256": "aae1501719310fa9fac1089face4c8cbf023afb0c86b4666c39232a038d62a7f",
+    "class_count": 6,
+    "endpoints": {
+      "api_admin": 0,
+      "categories": {
+        "unknown": 6
+      },
+      "primary": {
+        "alive": true,
+        "api_ok": true,
+        "base_urls": [
+          "https://m12345.com"
+        ],
+        "brand": false,
+        "category": "unknown",
+        "host": "m12345.com",
+        "http_status": 200,
+        "path_count": 3,
+        "path_probe": [
+          {
+            "path": "/faq",
+            "status": 200,
+            "verdict": "exists"
+          },
+          {
+            "path": "/privacy",
+            "status": 200,
+            "verdict": "exists"
+          },
+          {
+            "path": "/update",
+            "status": 200,
+            "verdict": "exists"
+          }
+        ],
+        "paths_sample": [
+          "/faq",
+          "/privacy",
+          "/update"
+        ],
+        "reason": "无明确 api/admin 域名，取综合评分最高且可用的地址；主机可达且接口探测命中（/faq → HTTP 200）",
+        "root_status": 200,
+        "scheme": "https",
+        "score": 128,
+        "server": "Apache",
+        "tls": "valid",
+        "url_count": 7
+      },
+      "probed": true,
+      "top": [
+        {
+          "alive": true,
+          "category": "unknown",
+          "host": "m12345.com",
+          "http_status": 200,
+          "score": 128
+        },
+        {
+          "alive": false,
+          "category": "unknown",
+          "host": "lovechat323.com",
+          "http_status": null,
+          "score": 63
+        },
+        {
+          "alive": true,
+          "category": "unknown",
+          "host": "translations.m12345.com",
+          "http_status": 200,
+          "score": 60
+        },
+        {
+          "alive": true,
+          "category": "unknown",
+          "host": "gzvmqgvikw-48b0d.firebaseio.com",
+          "http_status": 404,
+          "score": 33
+        },
+        {
+          "alive": false,
+          "category": "unknown",
+          "host": "stel.com",
+          "http_status": null,
+          "score": 28
+        },
+        {
+          "alive": false,
+          "category": "unknown",
+          "host": "translations.lovechat323.com",
+          "http_status": null,
+          "score": 15
+        }
+      ],
+      "total": 6
+    },
+    "finding_count": 6,
+    "findings": [
+      {
+        "confidence": "medium",
+        "cwe": [
+          "CWE-798"
+        ],
+        "file": "findings/01-cwe-798-硬编码敏感信息.json",
+        "risk_level": "high",
+        "score": 7.5,
+        "summary": "代码/资源中硬编码了 1 类敏感凭据（Google API Key×1），可直接从样本中提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e01-cwe-200-m12345.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 m12345.com（unknown），7 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e02-cwe-200-lovechat323.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 lovechat323.com（unknown），7 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e03-cwe-200-translations.m12345.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 translations.m12345.com（unknown），1 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e04-cwe-200-gzvmqgvikw-48b0d.firebaseio.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 gzvmqgvikw-48b0d.firebaseio.com（unknown），1 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e05-cwe-200-stel.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 stel.com（unknown），0 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      }
+    ],
+    "min_sdk": "21",
+    "package_name": "app.crimson.pebble.orbit",
+    "sample_file": "8bd3a8e50bcaca0a87f43feb05ac37fd.apk",
+    "sample_id": "8bd3a8e50bcaca0a87f43feb05ac37fd",
+    "target_sdk": "28",
+    "version_code": "172",
+    "version_name": "1.0.0"
+  }
+}

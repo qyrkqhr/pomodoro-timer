@@ -1,0 +1,3042 @@
+{
+  "findings": [
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-926"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "组件导出暴露"
+      },
+      "details": "清单中 4 个 Activity 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.tencent.qcloud.tim.push.TIMPushOpenActivity, com.tencent.qcloud.tim.push.components.FCMLinkActivity, com.xiaomi.mipush.sdk.NotificationClickedActivity, bin.mt.file.content.MTDataFilesWakeUpActivity 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "L",
+          "I": "L"
+        },
+        "impact_description": "任意同设备应用可向该 Activity 发送 Intent 触发其逻辑，可能造成越权操作、界面劫持或状态篡改。",
+        "preconditions": [
+          "攻击者应用可与目标应用安装在同一 Android 设备上",
+          "目标组件在清单中导出且未声明 android:permission",
+          "无需 root 或系统权限"
+        ],
+        "scope_note": "本地攻击面（同设备应用），非远程可利用；组件被调用后的真实业务影响未经动态验证。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "清单中 4 个 Activity 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.tencent.qcloud.tim.push.TIMPushOpenActivity, com.tencent.qcloud.tim.push.components.FCMLinkActivity, com.xiaomi.mipush.sdk.NotificationClickedActivity, bin.mt.file.content.MTDataFilesWakeUpActivity 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Improper Export of Android Application Components"
+            }
+          ],
+          "name": "Android 应用组件的不当导出",
+          "problem_type_id": "CWE-926",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "4 个组件对任意同设备应用可达。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "导出组件应通过 android:permission 限定可调用方，或设置为 exported=\"false\"。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包样本 APK，用 JADX 解码 AndroidManifest.xml。",
+            "actual": "成功解码清单，application 下共 4 个待确认组件。",
+            "evidence_refs": [
+              "evidence/manifest.xml"
+            ],
+            "expected": "获得完整、可读的清单声明。",
+            "seq": 1
+          },
+          {
+            "action": "逐个检查 Activity 的 android:exported 与 android:permission 声明。",
+            "actual": "4 个组件导出且无权限约束。",
+            "evidence_refs": [
+              "evidence/exported-components.txt"
+            ],
+            "expected": "导出组件应声明 android:permission 限制调用方。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "score_value": 5.1,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "导出的 Activity（4 个）未设置权限保护，任意应用可调用",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "com.tencent.qcloud.tim.push.TIMPushOpenActivity；com.tencent.qcloud.tim.push.components.FCMLinkActivity；com.xiaomi.mipush.sdk.NotificationClickedActivity；bin.mt.file.content.MTDataFilesWakeUpActivity",
+          "name": "多个Activity组件",
+          "type": "activity"
+        },
+        "entry_point": "exported-component",
+        "layer": "manifest"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-926"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "组件导出暴露"
+      },
+      "details": "清单中 1 个 Service 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.huawei.hms.support.api.push.service.HmsMsgService 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "L",
+          "I": "L"
+        },
+        "impact_description": "任意同设备应用可向该 Service 发送 Intent 触发其逻辑，可能造成越权操作、界面劫持或状态篡改。",
+        "preconditions": [
+          "攻击者应用可与目标应用安装在同一 Android 设备上",
+          "目标组件在清单中导出且未声明 android:permission",
+          "无需 root 或系统权限"
+        ],
+        "scope_note": "本地攻击面（同设备应用），非远程可利用；组件被调用后的真实业务影响未经动态验证。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "清单中 1 个 Service 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.huawei.hms.support.api.push.service.HmsMsgService 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Improper Export of Android Application Components"
+            }
+          ],
+          "name": "Android 应用组件的不当导出",
+          "problem_type_id": "CWE-926",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "1 个组件对任意同设备应用可达。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "导出组件应通过 android:permission 限定可调用方，或设置为 exported=\"false\"。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包样本 APK，用 JADX 解码 AndroidManifest.xml。",
+            "actual": "成功解码清单，application 下共 1 个待确认组件。",
+            "evidence_refs": [
+              "evidence/manifest.xml"
+            ],
+            "expected": "获得完整、可读的清单声明。",
+            "seq": 1
+          },
+          {
+            "action": "逐个检查 Service 的 android:exported 与 android:permission 声明。",
+            "actual": "1 个组件导出且无权限约束。",
+            "evidence_refs": [
+              "evidence/exported-components.txt"
+            ],
+            "expected": "导出组件应声明 android:permission 限制调用方。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "score_value": 5.1,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "导出的 Service（1 个）未设置权限保护，任意应用可调用",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "com.huawei.hms.support.api.push.service.HmsMsgService",
+          "name": "com.huawei.hms.support.api.push.service.HmsMsgService",
+          "type": "service"
+        },
+        "entry_point": "exported-component",
+        "layer": "manifest"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-926"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "组件导出暴露"
+      },
+      "details": "清单中 2 个 BroadcastReceiver 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.tencent.timpush.xiaomi.TIMPushXiaoMiMsgReceiver, com.tencent.timpush.meizu.TIMPushMeiZuReceiver 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "L",
+          "I": "L"
+        },
+        "impact_description": "任意同设备应用可向该 BroadcastReceiver 发送 Intent 触发其逻辑，可能造成越权操作、界面劫持或状态篡改。",
+        "preconditions": [
+          "攻击者应用可与目标应用安装在同一 Android 设备上",
+          "目标组件在清单中导出且未声明 android:permission",
+          "无需 root 或系统权限"
+        ],
+        "scope_note": "本地攻击面（同设备应用），非远程可利用；组件被调用后的真实业务影响未经动态验证。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "清单中 2 个 BroadcastReceiver 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.tencent.timpush.xiaomi.TIMPushXiaoMiMsgReceiver, com.tencent.timpush.meizu.TIMPushMeiZuReceiver 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Improper Export of Android Application Components"
+            }
+          ],
+          "name": "Android 应用组件的不当导出",
+          "problem_type_id": "CWE-926",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "2 个组件对任意同设备应用可达。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "导出组件应通过 android:permission 限定可调用方，或设置为 exported=\"false\"。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包样本 APK，用 JADX 解码 AndroidManifest.xml。",
+            "actual": "成功解码清单，application 下共 2 个待确认组件。",
+            "evidence_refs": [
+              "evidence/manifest.xml"
+            ],
+            "expected": "获得完整、可读的清单声明。",
+            "seq": 1
+          },
+          {
+            "action": "逐个检查 BroadcastReceiver 的 android:exported 与 android:permission 声明。",
+            "actual": "2 个组件导出且无权限约束。",
+            "evidence_refs": [
+              "evidence/exported-components.txt"
+            ],
+            "expected": "导出组件应声明 android:permission 限制调用方。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "score_value": 5.1,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "导出的 BroadcastReceiver（2 个）未设置权限保护，任意应用可调用",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "com.tencent.timpush.xiaomi.TIMPushXiaoMiMsgReceiver；com.tencent.timpush.meizu.TIMPushMeiZuReceiver",
+          "name": "多个BroadcastReceiver组件",
+          "type": "receiver"
+        },
+        "entry_point": "exported-component",
+        "layer": "manifest"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-926"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "组件导出暴露"
+      },
+      "details": "清单中 1 个 ContentProvider 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.huawei.hms.support.api.push.PushProvider 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "H",
+          "I": "N"
+        },
+        "impact_description": "未授权应用可查询/插入/删除该 Provider 暴露的数据，具体影响取决于该 Provider 的查询实现与底层数据敏感度。",
+        "preconditions": [
+          "攻击者应用可与目标应用安装在同一 Android 设备上",
+          "目标组件在清单中导出且未声明 android:permission",
+          "无需 root 或系统权限"
+        ],
+        "scope_note": "本地攻击面（同设备应用），非远程可利用；组件被调用后的真实业务影响未经动态验证。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "清单中 1 个 ContentProvider 声明为 exported=\"true\"（或未显式声明但因含 intent-filter 而默认导出），且组件与 application 均未声明 android:permission。根因是组件导出缺少权限约束（CWE-926）。证据：解码后的 AndroidManifest.xml 中可见 com.huawei.hms.support.api.push.PushProvider 满足上述条件。触发前提：攻击应用与目标安装在同一设备，无需特殊权限即可构造显式 Intent。未验证边界：各组件被调用后的具体业务后果需结合实现判断，本报告仅确认导出可达性。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Improper Export of Android Application Components"
+            }
+          ],
+          "name": "Android 应用组件的不当导出",
+          "problem_type_id": "CWE-926",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "1 个组件对任意同设备应用可达。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "导出组件应通过 android:permission 限定可调用方，或设置为 exported=\"false\"。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包样本 APK，用 JADX 解码 AndroidManifest.xml。",
+            "actual": "成功解码清单，application 下共 1 个待确认组件。",
+            "evidence_refs": [
+              "evidence/manifest.xml"
+            ],
+            "expected": "获得完整、可读的清单声明。",
+            "seq": 1
+          },
+          {
+            "action": "逐个检查 ContentProvider 的 android:exported 与 android:permission 声明。",
+            "actual": "1 个组件导出且无权限约束。",
+            "evidence_refs": [
+              "evidence/exported-components.txt"
+            ],
+            "expected": "导出组件应声明 android:permission 限制调用方。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "score_value": 6.2,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "导出的 ContentProvider（1 个）未设置权限保护，任意应用可访问其数据",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "com.huawei.hms.support.api.push.PushProvider",
+          "name": "com.huawei.hms.support.api.push.PushProvider",
+          "type": "provider"
+        },
+        "entry_point": "exported-component",
+        "layer": "manifest"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "medium",
+        "cwe_ids": [
+          "CWE-939"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "DeepLink漏洞"
+      },
+      "details": "清单中 2 个导出 Activity 通过 intent-filter/data 注册了自定义 Scheme：9Dcbu://*, pushscheme://com.tencent.qcloud.uniapp。此类深链入口默认可被任意应用或浏览器构造 Intent 唤起，若 Activity 直接信任 Intent 中的参数（如跳转地址、token、金额）即形成越权。根因是为自定义 URL Scheme 的处理器缺少授权校验（CWE-939）。证据：com.android.imchat.launcher.LauncherActivity, com.tencent.qcloud.tim.push.TIMPushOpenActivity。未验证边界：未确认这些 Activity 是否对参数做校验，实际可利用性需结合实现判断。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "L",
+          "I": "L"
+        },
+        "impact_description": "攻击者可构造深链唤起目标页面并注入参数，可能导致越权跳转、敏感操作被诱导执行；具体后果取决于 Activity 对参数的信任程度。",
+        "preconditions": [
+          "目标 Activity 导出且注册了自定义 Scheme",
+          "攻击者可通过网页或同设备应用构造 Intent",
+          "需用户点击链接（存在交互前提）"
+        ],
+        "scope_note": "本地/浏览器触发，需用户交互；参数校验情况未验证。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "清单中 2 个导出 Activity 通过 intent-filter/data 注册了自定义 Scheme：9Dcbu://*, pushscheme://com.tencent.qcloud.uniapp。此类深链入口默认可被任意应用或浏览器构造 Intent 唤起，若 Activity 直接信任 Intent 中的参数（如跳转地址、token、金额）即形成越权。根因是为自定义 URL Scheme 的处理器缺少授权校验（CWE-939）。证据：com.android.imchat.launcher.LauncherActivity, com.tencent.qcloud.tim.push.TIMPushOpenActivity。未验证边界：未确认这些 Activity 是否对参数做校验，实际可利用性需结合实现判断。（判定置信度：medium）"
+            },
+            {
+              "lang": "en",
+              "value": "Improper Authorization in Handler for Custom URL Scheme"
+            }
+          ],
+          "name": "自定义 URL Scheme 处理器中的不当授权",
+          "problem_type_id": "CWE-939",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "2 个深链入口对任意调用方可达。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "深链处理入口应校验调用方身份与参数白名单。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包并解码 AndroidManifest.xml。",
+            "actual": "解码成功。",
+            "evidence_refs": [
+              "evidence/manifest.xml"
+            ],
+            "expected": "获得组件与 intent-filter 声明。",
+            "seq": 1
+          },
+          {
+            "action": "筛出含 <data android:scheme> 的导出 Activity。",
+            "actual": "发现 2 个深链入口：9Dcbu://*, pushscheme://com.tencent.qcloud.uniapp。",
+            "evidence_refs": [
+              "evidence/deeplinks.txt"
+            ],
+            "expected": "深链入口应对调用方来源做校验。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+          "score_value": 4.4,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "导出 Activity 注册了 2 条自定义 URL Scheme，未校验来源即可被任意应用或浏览器唤起",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "com.android.imchat.launcher.LauncherActivity [9Dcbu://*]；com.tencent.qcloud.tim.push.TIMPushOpenActivity [pushscheme://com.tencent.qcloud.uniapp]",
+          "name": "多个 Activity（2 个）",
+          "type": "activity"
+        },
+        "entry_point": "deeplink",
+        "layer": "manifest"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "medium",
+        "cwe_ids": [
+          "CWE-319"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "不安全网络通信"
+      },
+      "details": "代码/资源中存在 6 个 http:// 明文地址；并配置了自定义 networkSecurityConfig，需人工确认是否放行明文。根因是未强制使用 TLS（CWE-319）。证据：http://10.38.162.35:9085, http://schemas.microsoft.com/DRM/2007/03/protocols/AcquireLicense, http://xmlpull.org/v1/doc/features.html#process-docdecl, http://xmlpull.org/v1/doc/features.html#process-namespaces, http://xmlpull.org/v1/doc/features.html#report-namespace-prefixes。在公共 Wi-Fi 等不可信网络下，攻击者可对明文流量进行嗅探与篡改，导致凭据、会话或业务数据泄露。未验证边界：未实测这些地址是否仍在使用，也未验证是否存在证书固定等补偿措施。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "H",
+          "I": "N"
+        },
+        "impact_description": "同一网络下的攻击者可嗅探、篡改明文流量，可能导致凭据泄露或业务数据被篡改。",
+        "preconditions": [
+          "攻击者与用户处于同一网络（如公共 Wi-Fi）或可实施中间人攻击",
+          "应用实际通过 http:// 传输业务或认证数据"
+        ],
+        "scope_note": "远程网络位置利用，需中间人前提；未验证明文接口是否为生产在用。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "代码/资源中存在 6 个 http:// 明文地址；并配置了自定义 networkSecurityConfig，需人工确认是否放行明文。根因是未强制使用 TLS（CWE-319）。证据：http://10.38.162.35:9085, http://schemas.microsoft.com/DRM/2007/03/protocols/AcquireLicense, http://xmlpull.org/v1/doc/features.html#process-docdecl, http://xmlpull.org/v1/doc/features.html#process-namespaces, http://xmlpull.org/v1/doc/features.html#report-namespace-prefixes。在公共 Wi-Fi 等不可信网络下，攻击者可对明文流量进行嗅探与篡改，导致凭据、会话或业务数据泄露。未验证边界：未实测这些地址是否仍在使用，也未验证是否存在证书固定等补偿措施。（判定置信度：medium）"
+            },
+            {
+              "lang": "en",
+              "value": "Cleartext Transmission of Sensitive Information"
+            }
+          ],
+          "name": "敏感信息的明文传输",
+          "problem_type_id": "CWE-319",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "存在明文传输放行配置与 http:// 地址。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "应用应仅使用 HTTPS，并通过 networkSecurityConfig 禁止明文。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "解码 AndroidManifest.xml 并检查 usesCleartextTraffic 与 networkSecurityConfig。",
+            "actual": "代码/资源中存在 6 个 http:// 明文地址；并配置了自定义 networkSecurityConfig，需人工确认是否放行明文。",
+            "evidence_refs": [
+              "evidence/manifest.xml"
+            ],
+            "expected": "生产应用应禁止明文传输。",
+            "seq": 1
+          },
+          {
+            "action": "扫描 dex 字符串表与资源，提取以 http:// 开头的接口地址。",
+            "actual": "命中 6 个明文地址。",
+            "evidence_refs": [
+              "evidence/cleartext-endpoints.txt"
+            ],
+            "expected": "不应存在明文接口地址。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "score_value": 5.9,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "应用允许 HTTP 明文传输，且存在硬编码的 http:// 接口地址，流量可被中间人窃听或篡改",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "代码/资源中存在 6 个 http:// 明文地址；并配置了自定义 networkSecurityConfig，需人工确认是否放行明文",
+          "name": "网络通信配置",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "low",
+        "cwe_ids": [
+          "CWE-295"
+        ],
+        "detection_method": "static",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "证书校验缺陷"
+      },
+      "details": "字符串表命中 onReceivedSslError、checkServerTrusted。根因是证书/主机名校验可被自定义实现放宽（CWE-295）。覆写 onReceivedSslError 后若直接调用 proceed()，或使用 ALLOW_ALL_HOSTNAME_VERIFIER，会使 HTTPS 失去身份认证能力，攻击者可借伪造证书实施中间人攻击。证据：上述符号出现在 dex 字符串表中。未验证边界：未反编译确认回调内是否真的调用了 proceed()，也未确认该校验是否覆盖全部网络请求，属候选结论。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "H",
+          "I": "N"
+        },
+        "impact_description": "若校验确被放宽，中间人可解密或篡改 HTTPS 流量。",
+        "preconditions": [
+          "应用实际使用被覆写的校验逻辑处理 HTTPS 连接",
+          "攻击者可实施中间人攻击（如伪造 CA 或劫持网络）"
+        ],
+        "scope_note": "远程需中间人前提；回调实现未反编译确认，属候选。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "字符串表命中 onReceivedSslError、checkServerTrusted。根因是证书/主机名校验可被自定义实现放宽（CWE-295）。覆写 onReceivedSslError 后若直接调用 proceed()，或使用 ALLOW_ALL_HOSTNAME_VERIFIER，会使 HTTPS 失去身份认证能力，攻击者可借伪造证书实施中间人攻击。证据：上述符号出现在 dex 字符串表中。未验证边界：未反编译确认回调内是否真的调用了 proceed()，也未确认该校验是否覆盖全部网络请求，属候选结论。（判定置信度：low）"
+            },
+            {
+              "lang": "en",
+              "value": "Improper Certificate Validation"
+            }
+          ],
+          "name": "证书校验不当",
+          "problem_type_id": "CWE-295",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "存在自定义证书校验符号。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "证书校验应使用系统默认 TrustManager，不得在 onReceivedSslError 中无条件 proceed。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "扫描 dex 字符串表中的证书校验相关符号。",
+            "actual": "命中 onReceivedSslError、checkServerTrusted。",
+            "evidence_refs": [
+              "evidence/ssl-validation.txt"
+            ],
+            "expected": "不应实现放行全部证书的校验逻辑。",
+            "seq": 1
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "score_value": 5.9,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "应用覆写了 WebView/HTTP 的证书校验逻辑，存在忽略证书错误、绕过校验的风险",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "onReceivedSslError、checkServerTrusted",
+          "name": "证书校验实现",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "code"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "min_sdk": "21",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性（JADX 解码）",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "target_sdk": "34",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 package 属性（JADX 解码）"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "low",
+        "cwe_ids": [
+          "CWE-327"
+        ],
+        "detection_method": "static",
+        "risk_level": "low",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "vuln_class": "加密算法误用"
+      },
+      "details": "字符串表命中弱算法标识：/ECB/、MD5withRSA、RC4。根因是选用已被证明不安全的加密算法或分组模式（CWE-327）。DES/RC4 密钥空间不足，ECB 模式对相同明文产生相同密文、泄露数据结构，均可被离线分析破解。证据：上述算法标识出现在 dex 中。未验证边界：可能来自第三方库的兼容代码而非业务关键路径，也未确认其保护的数据敏感度，属候选结论。（CWE 在线核对未完成，名称取自本地映射。）",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "L",
+          "I": "N"
+        },
+        "impact_description": "使用弱算法保护的敏感数据存在被离线破解的风险。",
+        "preconditions": [
+          "弱算法实际用于保护业务数据或凭据",
+          "攻击者能获取密文"
+        ],
+        "scope_note": "结论基于符号存在性，未确认调用路径与保护对象，属候选。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "字符串表命中弱算法标识：/ECB/、MD5withRSA、RC4。根因是选用已被证明不安全的加密算法或分组模式（CWE-327）。DES/RC4 密钥空间不足，ECB 模式对相同明文产生相同密文、泄露数据结构，均可被离线分析破解。证据：上述算法标识出现在 dex 中。未验证边界：可能来自第三方库的兼容代码而非业务关键路径，也未确认其保护的数据敏感度，属候选结论。（判定置信度：low）"
+            },
+            {
+              "lang": "en",
+              "value": "Use of a Broken or Risky Cryptographic Algorithm"
+            }
+          ],
+          "name": "使用已被攻破或存在风险的加密算法",
+          "problem_type_id": "CWE-327",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "存在弱算法/ECB 模式的使用痕迹。",
+        "environment": {
+          "device_model": null,
+          "network_env": "不适用（静态分析，未发起网络请求）",
+          "os": "不适用（离线静态分析，未在设备上运行）",
+          "os_version": null,
+          "prerequisite": "仅需样本 APK 文件",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1"
+          ]
+        },
+        "expected_result": "应使用 AES/GCM 等安全算法与模式，并正确管理密钥与 IV。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "扫描 dex 字符串表中的加密算法标识。",
+            "actual": "命中 /ECB/、MD5withRSA、RC4。",
+            "evidence_refs": [
+              "evidence/weak-crypto.txt"
+            ],
+            "expected": "应使用 AES-GCM 等现代算法与随机 IV。",
+            "seq": 1
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+          "score_value": 3.7,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "应用使用弱加密算法或 ECB 模式（/ECB/, MD5withRSA, RC4），加密数据易被破解",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "/ECB/、MD5withRSA、RC4",
+          "name": "加密实现",
+          "type": "other"
+        },
+        "entry_point": "other",
+        "layer": "crypto"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 cloud.tencent.com（分类：unknown，评分 169），共 16 条完整 URL、12 条接口路径。来源文件：classes.dex, classes2.dex, libImSDK.so, resources.arsc。地址形态：HTTPS。URL 示例：https://cloud.tencent.com/act/event/smarty-service?from=im-doc | https://cloud.tencent.com/act/pro/imnew?from=17971 | https://cloud.tencent.com/document/product/269/11673?from=17219#.E5.9F.BA.E7.A1. | https://cloud.tencent.com/document/product/269/1606。接口路径：/act/event/smarty-service、/act/pro/imnew、/document/product/269/11673、/document/product/269/1606、/document/product/269/32458。 动态探活：主机可达（根路径 HTTP 200），Server=nginx，TLS=valid，延迟 220ms。路径探测：/act/event/smarty-service → HTTP 404（接口不存在）；/act/pro/imnew → HTTP 200（接口存在）；/document/product/269/11673 → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 cloud.tencent.com（分类：unknown，评分 169），共 16 条完整 URL、12 条接口路径。来源文件：classes.dex, classes2.dex, libImSDK.so, resources.arsc。地址形态：HTTPS。URL 示例：https://cloud.tencent.com/act/event/smarty-service?from=im-doc | https://cloud.tencent.com/act/pro/imnew?from=17971 | https://cloud.tencent.com/document/product/269/11673?from=17219#.E5.9F.BA.E7.A1. | https://cloud.tencent.com/document/product/269/1606。接口路径：/act/event/smarty-service、/act/pro/imnew、/document/product/269/11673、/document/product/269/1606、/document/produ（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 cloud.tencent.com 及 16 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 cloud.tencent.com，累计 34 次引用，来源 classes.dex, classes2.dex, libImSDK.so。",
+            "evidence_refs": [
+              "evidence/endpoint-01-cloud.tencent.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 cloud.tencent.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 200，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-01-cloud.tencent.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 cloud.tencent.com（unknown），16 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 16 条；路径 12 条；来源 classes.dex, classes2.dex, libImSDK.so",
+          "name": "cloud.tencent.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 im.sdk.qcloud.com（分类：realtime，评分 151），共 10 条完整 URL、10 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://im.sdk.qcloud.com/download/plus/8.7.7201/ | https://im.sdk.qcloud.com/download/tuikit-resource/community-cover/community_cov | https://im.sdk.qcloud.com/download/tuikit-resource/community-cover/community_cov | https://im.sdk.qcloud.com/download/tuikit-resource/community-cover/community_cov。接口路径：/download/plus/8.7.7201/、/download/tuikit-resource/community-cover/commun、/download/tuikit-resource/community-cover/commun、/download/tuikit-resource/community-cover/commun、/download/tuikit-resource/conversation-backgroun。 动态探活：主机可达（根路径 HTTP 403），Server=tencent-cos，TLS=valid，延迟 249ms。路径探测：/download/plus/8.7.7201/ → HTTP 200（接口存在）；/download/tuikit-resource/community-cover/community_cover_ → HTTP 404（接口不存在）；/download/tuikit-resource/community-cover/community_cover_default.png → HTTP 20…",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 im.sdk.qcloud.com（分类：realtime，评分 151），共 10 条完整 URL、10 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://im.sdk.qcloud.com/download/plus/8.7.7201/ | https://im.sdk.qcloud.com/download/tuikit-resource/community-cover/community_cov | https://im.sdk.qcloud.com/download/tuikit-resource/community-cover/community_cov | https://im.sdk.qcloud.com/download/tuikit-resource/community-cover/community_cov。接口路径：/download/plus/8.7.7201/、/download/tuikit-resource/community-cover/commun、/download/tuikit-resource/communi（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 im.sdk.qcloud.com 及 10 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 im.sdk.qcloud.com，累计 20 次引用，来源 classes.dex。",
+            "evidence_refs": [
+              "evidence/endpoint-02-im.sdk.qcloud.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 im.sdk.qcloud.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 403，TLS=valid，Server=tencent-cos",
+            "evidence_refs": [
+              "evidence/endpoint-02-im.sdk.qcloud.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 im.sdk.qcloud.com（realtime），10 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 realtime；URL 10 条；路径 10 条；来源 classes.dex",
+          "name": "im.sdk.qcloud.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 api-push.meizu.com（分类：api，评分 129），共 5 条完整 URL、4 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://api-push.meizu.com | https://api-push.meizu.com/garcia/api/client/ | https://api-push.meizu.com/garcia/api/client/log/upload | https://api-push.meizu.com/garcia/api/server/getPublicKey。接口路径：/garcia/api/client/、/garcia/api/client/log/upload、/garcia/api/server/getPublicKey、/garcia/api/server/getPushConf。 动态探活：主机可达（根路径 HTTP 404），Server=APISIX/2.15.1，TLS=valid，延迟 268ms。根路径 404 只说明根目录没有默认页，不等于业务接口不存在。路径探测：/garcia/api/client/ → HTTP 404（接口不存在）；/garcia/api/client/log/upload → HTTP 200（接口存在）；/garcia/api/server/getPublicKey → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 api-push.meizu.com（分类：api，评分 129），共 5 条完整 URL、4 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://api-push.meizu.com | https://api-push.meizu.com/garcia/api/client/ | https://api-push.meizu.com/garcia/api/client/log/upload | https://api-push.meizu.com/garcia/api/server/getPublicKey。接口路径：/garcia/api/client/、/garcia/api/client/log/upload、/garcia/api/server/getPublicKey、/garcia/api/server/getPushConf。 动态探活：主机可达（根路径 HTTP 404），Server=APISIX/2.15.1，TLS=valid，延迟 268ms。根路径 404 只说明根目录没有默认页，不等于业务接口不存在。路径探测：/garc（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 api-push.meizu.com 及 5 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 api-push.meizu.com，累计 10 次引用，来源 classes.dex。",
+            "evidence_refs": [
+              "evidence/endpoint-03-api-push.meizu.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 api-push.meizu.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 404，TLS=valid，Server=APISIX/2.15.1",
+            "evidence_refs": [
+              "evidence/endpoint-03-api-push.meizu.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 api-push.meizu.com（api），5 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 api；URL 5 条；路径 4 条；来源 classes.dex",
+          "name": "api-push.meizu.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 api-push.in.meizu.com（分类：api，评分 102），共 2 条完整 URL、1 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://api-push.in.meizu.com | https://api-push.in.meizu.com/garcia/api/client/。接口路径：/garcia/api/client/。 动态探活：主机可达（根路径 HTTP 200），Server=openresty，TLS=valid，延迟 402ms。路径探测：/garcia/api/client/ → HTTP 404（接口不存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达（根路径 HTTP 200，不代表接口存在）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 api-push.in.meizu.com（分类：api，评分 102），共 2 条完整 URL、1 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://api-push.in.meizu.com | https://api-push.in.meizu.com/garcia/api/client/。接口路径：/garcia/api/client/。 动态探活：主机可达（根路径 HTTP 200），Server=openresty，TLS=valid，延迟 402ms。路径探测：/garcia/api/client/ → HTTP 404（接口不存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 api-push.in.meizu.com 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 api-push.in.meizu.com，累计 4 次引用，来源 classes.dex。",
+            "evidence_refs": [
+              "evidence/endpoint-04-api-push.in.meizu.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 api-push.in.meizu.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 200，TLS=valid，Server=openresty",
+            "evidence_refs": [
+              "evidence/endpoint-04-api-push.in.meizu.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 api-push.in.meizu.com（api），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 api；URL 2 条；路径 1 条；来源 classes.dex",
+          "name": "api-push.in.meizu.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 162.14.19.159（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://162.14.19.159/netcheck | https://162.14.19.159/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 377ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 162.14.19.159（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://162.14.19.159/netcheck | https://162.14.19.159/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 377ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 162.14.19.159 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 162.14.19.159，累计 2 次引用，来源 libImSDK.so。",
+            "evidence_refs": [
+              "evidence/endpoint-05-162.14.19.159.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 162.14.19.159 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 405，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-05-162.14.19.159.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 162.14.19.159（api），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 api；URL 2 条；路径 2 条；来源 libImSDK.so",
+          "name": "162.14.19.159",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 162.14.19.46（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://162.14.19.46/netcheck | https://162.14.19.46/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 397ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 162.14.19.46（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://162.14.19.46/netcheck | https://162.14.19.46/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 397ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 162.14.19.46 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 162.14.19.46，累计 2 次引用，来源 libImSDK.so。",
+            "evidence_refs": [
+              "evidence/endpoint-06-162.14.19.46.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 162.14.19.46 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 405，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-06-162.14.19.46.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 162.14.19.46（api），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 api；URL 2 条；路径 2 条；来源 libImSDK.so",
+          "name": "162.14.19.46",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 162.14.3.17（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://162.14.3.17/netcheck | https://162.14.3.17/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 1269ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 162.14.3.17（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://162.14.3.17/netcheck | https://162.14.3.17/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 1269ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 162.14.3.17 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 162.14.3.17，累计 2 次引用，来源 libImSDK.so。",
+            "evidence_refs": [
+              "evidence/endpoint-07-162.14.3.17.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 162.14.3.17 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 405，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-07-162.14.3.17.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 162.14.3.17（api），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 api；URL 2 条；路径 2 条；来源 libImSDK.so",
+          "name": "162.14.3.17",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 43.129.34.169（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://43.129.34.169/netcheck | https://43.129.34.169/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 363ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 43.129.34.169（分类：api，评分 90），共 2 条完整 URL、2 条接口路径。来源文件：libImSDK.so。地址形态：HTTPS。URL 示例：https://43.129.34.169/netcheck | https://43.129.34.169/v4/ConfigGetSvc/GetOpenSSOIPList。接口路径：/netcheck、/v4/ConfigGetSvc/GetOpenSSOIPList。 动态探活：主机可达（根路径 HTTP 405），Server=nginx，TLS=valid，延迟 363ms。路径探测：/netcheck → HTTP 200（接口存在）；/v4/ConfigGetSvc/GetOpenSSOIPList → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 43.129.34.169 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 43.129.34.169，累计 2 次引用，来源 libImSDK.so。",
+            "evidence_refs": [
+              "evidence/endpoint-08-43.129.34.169.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 43.129.34.169 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 405，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-08-43.129.34.169.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 43.129.34.169（api），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 api；URL 2 条；路径 2 条；来源 libImSDK.so",
+          "name": "43.129.34.169",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-319"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "medium",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "不安全网络通信"
+      },
+      "details": "从样本中静态提取到后台地址 certificates.godaddy.com（分类：repo，评分 84），共 2 条完整 URL、2 条接口路径。来源文件：libagora-rtc-sdk.so。地址形态：明文 HTTP。URL 示例：http://certificates.godaddy.com/repository/gd_intermediate.crt0 | http://certificates.godaddy.com/repository100.。接口路径：/repository/gd_intermediate.crt0、/repository100.。 动态探活：主机可达（根路径 HTTP 403），Server=AkamaiGHost，TLS=n/a，延迟 1865ms。路径探测：/repository/gd_intermediate.crt0 → HTTP 403（接口存在）；/repository100. → HTTP 403（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "H",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 403）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 certificates.godaddy.com（分类：repo，评分 84），共 2 条完整 URL、2 条接口路径。来源文件：libagora-rtc-sdk.so。地址形态：明文 HTTP。URL 示例：http://certificates.godaddy.com/repository/gd_intermediate.crt0 | http://certificates.godaddy.com/repository100.。接口路径：/repository/gd_intermediate.crt0、/repository100.。 动态探活：主机可达（根路径 HTTP 403），Server=AkamaiGHost，TLS=n/a，延迟 1865ms。路径探测：/repository/gd_intermediate.crt0 → HTTP 403（接口存在）；/repository100. → HTTP 403（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Cleartext Transmission of Sensitive Information"
+            }
+          ],
+          "name": "敏感信息的明文传输",
+          "problem_type_id": "CWE-319",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 certificates.godaddy.com 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 certificates.godaddy.com，累计 4 次引用，来源 libagora-rtc-sdk.so。",
+            "evidence_refs": [
+              "evidence/endpoint-09-certificates.godaddy.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 certificates.godaddy.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 403，TLS=n/a，Server=AkamaiGHost",
+            "evidence_refs": [
+              "evidence/endpoint-09-certificates.godaddy.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "score_value": 5.9,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置明文后台地址 certificates.godaddy.com（repo），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 repo；URL 2 条；路径 2 条；来源 libagora-rtc-sdk.so",
+          "name": "certificates.godaddy.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 momo-youyi.uu.k4o97.com（分类：unknown，评分 73），共 2 条完整 URL、0 条接口路径。来源文件：6a7bc90219108748396b84e6d28a0a9e-dyn.har, classes.dex。地址形态：HTTPS。URL 示例：https://momo-youyi.uu.k4o97.com | https://momo-youyi.uu.k4o97.com/。接口路径：未提取到路径。 动态探活：主机可达（根路径 HTTP 404），Server=ESA，TLS=valid，延迟 485ms。根路径 404 只说明根目录没有默认页，不等于业务接口不存在。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达（根路径 HTTP 404，不代表接口存在）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 momo-youyi.uu.k4o97.com（分类：unknown，评分 73），共 2 条完整 URL、0 条接口路径。来源文件：6a7bc90219108748396b84e6d28a0a9e-dyn.har, classes.dex。地址形态：HTTPS。URL 示例：https://momo-youyi.uu.k4o97.com | https://momo-youyi.uu.k4o97.com/。接口路径：未提取到路径。 动态探活：主机可达（根路径 HTTP 404），Server=ESA，TLS=valid，延迟 485ms。根路径 404 只说明根目录没有默认页，不等于业务接口不存在。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 momo-youyi.uu.k4o97.com 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "unverified",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 momo-youyi.uu.k4o97.com，累计 5 次引用，来源 6a7bc90219108748396b84e6d28a0a9e-dyn.har, classes.dex。",
+            "evidence_refs": [
+              "evidence/endpoint-10-momo-youyi.uu.k4o97.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 momo-youyi.uu.k4o97.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 404，TLS=valid，Server=ESA",
+            "evidence_refs": [
+              "evidence/endpoint-10-momo-youyi.uu.k4o97.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 momo-youyi.uu.k4o97.com（unknown），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 2 条；路径 0 条；来源 6a7bc90219108748396b84e6d28a0a9e-dyn.har, classes.dex",
+          "name": "momo-youyi.uu.k4o97.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 buy.cloud.tencent.com（分类：unknown，评分 70），共 1 条完整 URL、1 条接口路径。来源文件：classes.dex, classes2.dex。地址形态：HTTPS。URL 示例：https://buy.cloud.tencent.com/avc?activeId=plugin&regionId=1。接口路径：/avc。 动态探活：主机可达（根路径 HTTP 200），Server=nginx，TLS=valid，延迟 484ms。路径探测：/avc → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 buy.cloud.tencent.com（分类：unknown，评分 70），共 1 条完整 URL、1 条接口路径。来源文件：classes.dex, classes2.dex。地址形态：HTTPS。URL 示例：https://buy.cloud.tencent.com/avc?activeId=plugin&regionId=1。接口路径：/avc。 动态探活：主机可达（根路径 HTTP 200），Server=nginx，TLS=valid，延迟 484ms。路径探测：/avc → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 buy.cloud.tencent.com 及 1 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 buy.cloud.tencent.com，累计 4 次引用，来源 classes.dex, classes2.dex。",
+            "evidence_refs": [
+              "evidence/endpoint-11-buy.cloud.tencent.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 buy.cloud.tencent.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 200，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-11-buy.cloud.tencent.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 buy.cloud.tencent.com（unknown），1 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 1 条；路径 1 条；来源 classes.dex, classes2.dex",
+          "name": "buy.cloud.tencent.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    },
+    {
+      "affected": [
+        {
+          "package": {
+            "ecosystem": "Android-APK",
+            "ecosystem_specific": {
+              "apk_md5": "6a7bc90219108748396b84e6d28a0a9e",
+              "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+              "package_format": "APK",
+              "package_name_source": "APK 清单 package 属性",
+              "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+              "version_code": "4",
+              "version_name": "2.7.7",
+              "version_source": "APK 清单 versionName/versionCode"
+            },
+            "name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+            "versions": [
+              "2.7.7(4)"
+            ]
+          }
+        }
+      ],
+      "aliases": [],
+      "database_specific": {
+        "confidence": "high",
+        "cwe_ids": [
+          "CWE-200"
+        ],
+        "detection_method": "hybrid",
+        "risk_level": "info",
+        "submission": {
+          "tool_chain": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "vuln_class": "硬编码敏感信息"
+      },
+      "details": "从样本中静态提取到后台地址 norma-external-collect.meizu.com（分类：unknown，评分 69），共 2 条完整 URL、2 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://norma-external-collect.meizu.com/android/exchange/getpublickey.do | https://norma-external-collect.meizu.com/push/android/external/add.do。接口路径：/android/exchange/getpublickey.do、/push/android/external/add.do。 动态探活：主机可达（根路径 HTTP 200），Server=nginx，TLS=valid，延迟 227ms。路径探测：/android/exchange/getpublickey.do → HTTP 200（接口存在）；/push/android/external/add.do → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无法证明其为生产在用、也无法确认鉴权方式与数据敏感度；若未启用探活或探活失败，需结合抓包确认。",
+      "impact_scope": {
+        "affected_devices_or_os": null,
+        "affected_versions": [],
+        "cia": {
+          "A": "N",
+          "C": "N",
+          "I": "N"
+        },
+        "impact_description": "攻击者可离线枚举后台域名与接口路径，缩小攻击面并为后续越权、注入或数据抓取提供入口；地址本身不直接造成数据泄露。",
+        "preconditions": [
+          "攻击者可获取样本 APK（应用商店/安装包/设备提取）",
+          "无需账号、设备或特殊权限即可离线提取"
+        ],
+        "scope_note": "属信息暴露类，本身不构成直接危害；风险来自地址可被用于后续测试。探活确认主机可达，且已知接口路径命中（HTTP 200）。"
+      },
+      "problem_types": [
+        {
+          "descriptions": [
+            {
+              "lang": "zh",
+              "value": "从样本中静态提取到后台地址 norma-external-collect.meizu.com（分类：unknown，评分 69），共 2 条完整 URL、2 条接口路径。来源文件：classes.dex。地址形态：HTTPS。URL 示例：https://norma-external-collect.meizu.com/android/exchange/getpublickey.do | https://norma-external-collect.meizu.com/push/android/external/add.do。接口路径：/android/exchange/getpublickey.do、/push/android/external/add.do。 动态探活：主机可达（根路径 HTTP 200），Server=nginx，TLS=valid，延迟 227ms。路径探测：/android/exchange/getpublickey.do → HTTP 200（接口存在）；/push/android/external/add.do → HTTP 200（接口存在）。 未验证边界：静态提取只能证明地址被写入客户端，无（判定置信度：high）"
+            },
+            {
+              "lang": "en",
+              "value": "Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+          ],
+          "name": "敏感信息暴露给未授权方",
+          "problem_type_id": "CWE-200",
+          "source_name": "CWE"
+        }
+      ],
+      "related": [],
+      "reproduction": {
+        "actual_result": "可直接从样本中提取 norma-external-collect.meizu.com 及 2 条接口 URL。",
+        "environment": {
+          "device_model": null,
+          "network_env": "公网可达测试网络",
+          "os": "不适用（静态提取+ HTTP 探活，未运行 APK）",
+          "os_version": null,
+          "prerequisite": "样本 APK 文件；探活需网络可达",
+          "root_or_jailbreak": null,
+          "tooling": [
+            "REA 6.5.0",
+            "JADX 0.7.1",
+            "apk-endpoints 1.0"
+          ]
+        },
+        "expected_result": "后台地址属于服务端资产，不应以明文常量形式固化在客户端供任意人提取。",
+        "reproducibility": "always",
+        "steps": [
+          {
+            "action": "离线解包 APK，解析 classes*.dex 字符串表、resources.arsc、assets 与 .so 明文串，按 URL/域名/路径三类规则提取候选地址。",
+            "actual": "命中 norma-external-collect.meizu.com，累计 4 次引用，来源 classes.dex。",
+            "evidence_refs": [
+              "evidence/endpoint-12-norma-external-collect.meizu.com.txt"
+            ],
+            "expected": "获得客户端内置的全部网络地址候选。",
+            "seq": 1
+          },
+          {
+            "action": "对 norma-external-collect.meizu.com 发起 HEAD 探活（User-Agent 伪装为 Android 客户端，6s 超时），再对已知接口路径逐一 GET 探测，区分「主机在」与「接口在」。",
+            "actual": "根路径 HTTP 200，TLS=valid，Server=nginx",
+            "evidence_refs": [
+              "evidence/endpoint-12-norma-external-collect.meizu.com.txt"
+            ],
+            "expected": "仅用于确认地址是否真实存在，不进行任何业务请求。",
+            "seq": 2
+          }
+        ]
+      },
+      "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+      "schema_version": "1.0.0",
+      "severity": [
+        {
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:N",
+          "score_value": 0,
+          "source": "team-self",
+          "type": "CVSS_V3.1"
+        }
+      ],
+      "summary": "客户端内置后台地址 norma-external-collect.meizu.com（unknown），2 个接口 URL 可直接提取",
+      "upstream": [],
+      "vulnerability_location": {
+        "component": {
+          "extra": "分类 unknown；URL 2 条；路径 2 条；来源 classes.dex",
+          "name": "norma-external-collect.meizu.com",
+          "type": "other"
+        },
+        "entry_point": "network-remote",
+        "layer": "network"
+      }
+    }
+  ],
+  "report": {
+    "apk_sha256": "3bd379ae65cd366158900a14d3fca36bcae550e8e22143ec5d918ba4aaa0fe24",
+    "class_count": 7801,
+    "endpoints": {
+      "api_admin": 19,
+      "categories": {
+        "api": 19,
+        "realtime": 5,
+        "repo": 2,
+        "storage": 3,
+        "unknown": 43,
+        "website": 4
+      },
+      "primary": {
+        "alive": true,
+        "api_ok": true,
+        "base_urls": [
+          "https://cloud.tencent.com"
+        ],
+        "brand": false,
+        "category": "unknown",
+        "host": "cloud.tencent.com",
+        "http_status": 200,
+        "path_count": 12,
+        "path_probe": [
+          {
+            "path": "/act/event/smarty-service",
+            "status": 404,
+            "verdict": "missing"
+          },
+          {
+            "path": "/act/pro/imnew",
+            "status": 200,
+            "verdict": "exists"
+          },
+          {
+            "path": "/document/product/269/11673",
+            "status": 200,
+            "verdict": "exists"
+          }
+        ],
+        "paths_sample": [
+          "/act/event/smarty-service",
+          "/act/pro/imnew",
+          "/document/product/269/11673",
+          "/document/product/269/1606",
+          "/document/product/269/32458",
+          "/document/product/269/32483",
+          "/document/product/269/36852",
+          "/document/product/269/37059"
+        ],
+        "reason": "无明确 api/admin 域名，取综合评分最高且可用的地址；主机可达且接口探测命中（/act/pro/imnew → HTTP 200）",
+        "root_status": 200,
+        "scheme": "https",
+        "score": 169,
+        "server": "nginx",
+        "tls": "valid",
+        "url_count": 16
+      },
+      "probed": true,
+      "top": [
+        {
+          "alive": true,
+          "category": "unknown",
+          "host": "cloud.tencent.com",
+          "http_status": 200,
+          "score": 169
+        },
+        {
+          "alive": true,
+          "category": "realtime",
+          "host": "im.sdk.qcloud.com",
+          "http_status": 403,
+          "score": 151
+        },
+        {
+          "alive": true,
+          "category": "api",
+          "host": "api-push.meizu.com",
+          "http_status": 404,
+          "score": 129
+        },
+        {
+          "alive": true,
+          "category": "website",
+          "host": "www.tencentcloud.com",
+          "http_status": 200,
+          "score": 112
+        },
+        {
+          "alive": true,
+          "category": "api",
+          "host": "api-push.in.meizu.com",
+          "http_status": 200,
+          "score": 102
+        },
+        {
+          "alive": true,
+          "category": "api",
+          "host": "162.14.19.159",
+          "http_status": 405,
+          "score": 90
+        },
+        {
+          "alive": true,
+          "category": "api",
+          "host": "162.14.19.46",
+          "http_status": 405,
+          "score": 90
+        },
+        {
+          "alive": true,
+          "category": "api",
+          "host": "162.14.3.17",
+          "http_status": 405,
+          "score": 90
+        },
+        {
+          "alive": true,
+          "category": "api",
+          "host": "43.129.34.169",
+          "http_status": 405,
+          "score": 90
+        },
+        {
+          "alive": true,
+          "category": "repo",
+          "host": "certificates.godaddy.com",
+          "http_status": 403,
+          "score": 84
+        },
+        {
+          "alive": true,
+          "category": "unknown",
+          "host": "momo-youyi.uu.k4o97.com",
+          "http_status": 404,
+          "score": 73
+        },
+        {
+          "alive": true,
+          "category": "unknown",
+          "host": "buy.cloud.tencent.com",
+          "http_status": 200,
+          "score": 70
+        }
+      ],
+      "total": 76
+    },
+    "finding_count": 20,
+    "findings": [
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-926"
+        ],
+        "file": "findings/01-cwe-926-组件导出暴露.json",
+        "risk_level": "medium",
+        "score": 5.1,
+        "summary": "导出的 Activity（4 个）未设置权限保护，任意应用可调用",
+        "vuln_class": "组件导出暴露"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-926"
+        ],
+        "file": "findings/02-cwe-926-组件导出暴露.json",
+        "risk_level": "medium",
+        "score": 5.1,
+        "summary": "导出的 Service（1 个）未设置权限保护，任意应用可调用",
+        "vuln_class": "组件导出暴露"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-926"
+        ],
+        "file": "findings/03-cwe-926-组件导出暴露.json",
+        "risk_level": "medium",
+        "score": 5.1,
+        "summary": "导出的 BroadcastReceiver（2 个）未设置权限保护，任意应用可调用",
+        "vuln_class": "组件导出暴露"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-926"
+        ],
+        "file": "findings/04-cwe-926-组件导出暴露.json",
+        "risk_level": "medium",
+        "score": 6.2,
+        "summary": "导出的 ContentProvider（1 个）未设置权限保护，任意应用可访问其数据",
+        "vuln_class": "组件导出暴露"
+      },
+      {
+        "confidence": "medium",
+        "cwe": [
+          "CWE-939"
+        ],
+        "file": "findings/05-cwe-939-DeepLink漏洞.json",
+        "risk_level": "medium",
+        "score": 4.4,
+        "summary": "导出 Activity 注册了 2 条自定义 URL Scheme，未校验来源即可被任意应用或浏览器唤起",
+        "vuln_class": "DeepLink漏洞"
+      },
+      {
+        "confidence": "medium",
+        "cwe": [
+          "CWE-319"
+        ],
+        "file": "findings/06-cwe-319-不安全网络通信.json",
+        "risk_level": "medium",
+        "score": 5.9,
+        "summary": "应用允许 HTTP 明文传输，且存在硬编码的 http:// 接口地址，流量可被中间人窃听或篡改",
+        "vuln_class": "不安全网络通信"
+      },
+      {
+        "confidence": "low",
+        "cwe": [
+          "CWE-295"
+        ],
+        "file": "findings/07-cwe-295-证书校验缺陷.json",
+        "risk_level": "medium",
+        "score": 5.9,
+        "summary": "应用覆写了 WebView/HTTP 的证书校验逻辑，存在忽略证书错误、绕过校验的风险",
+        "vuln_class": "证书校验缺陷"
+      },
+      {
+        "confidence": "low",
+        "cwe": [
+          "CWE-327"
+        ],
+        "file": "findings/08-cwe-327-加密算法误用.json",
+        "risk_level": "low",
+        "score": 3.7,
+        "summary": "应用使用弱加密算法或 ECB 模式（/ECB/, MD5withRSA, RC4），加密数据易被破解",
+        "vuln_class": "加密算法误用"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e01-cwe-200-cloud.tencent.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 cloud.tencent.com（unknown），16 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e02-cwe-200-im.sdk.qcloud.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 im.sdk.qcloud.com（realtime），10 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e03-cwe-200-api-push.meizu.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 api-push.meizu.com（api），5 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e04-cwe-200-api-push.in.meizu.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 api-push.in.meizu.com（api），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e05-cwe-200-162.14.19.159.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 162.14.19.159（api），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e06-cwe-200-162.14.19.46.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 162.14.19.46（api），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e07-cwe-200-162.14.3.17.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 162.14.3.17（api），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e08-cwe-200-43.129.34.169.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 43.129.34.169（api），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-319"
+        ],
+        "file": "findings/e09-cwe-319-certificates.godaddy.com.json",
+        "kind": "endpoint",
+        "risk_level": "medium",
+        "score": 5.9,
+        "summary": "客户端内置明文后台地址 certificates.godaddy.com（repo），2 个接口 URL 可直接提取",
+        "vuln_class": "不安全网络通信"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e10-cwe-200-momo-youyi.uu.k4o97.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 momo-youyi.uu.k4o97.com（unknown），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e11-cwe-200-buy.cloud.tencent.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 buy.cloud.tencent.com（unknown），1 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      },
+      {
+        "confidence": "high",
+        "cwe": [
+          "CWE-200"
+        ],
+        "file": "findings/e12-cwe-200-norma-external-collect.meizu.com.json",
+        "kind": "endpoint",
+        "risk_level": "info",
+        "score": 0,
+        "summary": "客户端内置后台地址 norma-external-collect.meizu.com（unknown），2 个接口 URL 可直接提取",
+        "vuln_class": "硬编码敏感信息"
+      }
+    ],
+    "min_sdk": "21",
+    "package_name": "svcxmkmxck.dllrq.ohzaeiabae.gjfjt.gbkyd",
+    "sample_file": "6a7bc90219108748396b84e6d28a0a9e.apk",
+    "sample_id": "6a7bc90219108748396b84e6d28a0a9e",
+    "target_sdk": "34",
+    "version_code": "4",
+    "version_name": "2.7.7"
+  }
+}
